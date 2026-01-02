@@ -2,187 +2,236 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinsuGPT | 접속패널</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MinsuGPT</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-black: #000000;
-            --hover-black: #333333;
-            --bg-white: #f5f5f7;
-            --card-bg: #ffffff;
-            --text-black: #1d1d1f;
-            --text-gray: #86868b;
-            --font-family: 'Elms Sans', 'Outfit', 'Godo', 'Godo M', 'Malgun Gothic', sans-serif;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --primary: #000000; 
+            --text-main: #222222;
+            --text-sub: #888888;
+            --border: #ececec;
+            --radius-card: 40px;
+            --radius-pill: 50px;
         }
 
-        * { font-family: var(--font-family) !important; box-sizing: border-box; }
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; letter-spacing: -0.01em; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
 
-        body { 
-            margin: 0; 
-            background-color: var(--bg-white); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            color: var(--text-black); 
+        .wrapper { position: relative; width: 100%; max-width: 400px; transition: max-width 0.3s; }
+        @media (max-width: 480px) { .wrapper { max-width: 320px; } }
+
+        .container { 
+            width: 100%; padding: 45px 35px; 
+            background: var(--card); border-radius: var(--radius-card); 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
         }
 
-        #login-container { 
-            width: 100%; 
-            max-width: 420px; 
-            padding: 40px; 
-            text-align: center;
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid #e1e4e8;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        .header { display: flex; align-items: center; justify-content: center; margin-bottom: 35px; gap: 12px; }
+        .header img { height: 24px; width: auto; display: block; object-fit: contain; }
+        .header span { font-size: 24px; font-weight: 200; color: var(--text-main); line-height: 1; }
+
+        .input-group { margin-bottom: 12px; }
+        .input-field { 
+            width: 100%; padding: 16px 20px; border: 1px solid var(--border); 
+            border-radius: 18px; font-size: 15px; outline: none; transition: 0.2s;
+            background: #fafafa;
+        }
+        .input-field:focus { border-color: var(--primary); background: #fff; }
+
+        .options { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 25px 4px; font-size: 13px; color: var(--text-sub); }
+        .options-label { display: flex; align-items: center; gap: 8px; }
+
+        .btn { 
+            position: relative; width: 100%; height: 54px; 
+            background: var(--primary); color: white; border: none; 
+            border-radius: var(--radius-pill); font-size: 16px; font-weight: 600; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { background: #e0e0e0; cursor: not-allowed; }
+        
+        .loading-wrap { display: none; height: 100%; align-items: center; justify-content: center; }
+        .loading-wrap img { height: 28px; width: auto; object-fit: contain; }
+
+        #tos-section, #auto-loading-section { display: none; animation: fadeIn 0.5s ease forwards; }
+
+        .loading-content { text-align: center; padding: 30px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loading-header-inline { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; width: 100%; }
+        .loading-header-inline img { height: 24px; width: auto; object-fit: contain; }
+        .loading-header-inline span { font-size: 24px; font-weight: 200; color: var(--text-main); line-height: 1; }
+        .loading-content .ani-gif { height: 45px; width: auto; object-fit: contain; margin: 0 auto; display: block; }
+
+        .external-footer { 
+            position: absolute; right: 0; bottom: -60px; 
+            display: flex; justify-content: flex-end; gap: 10px; width: 100%;
+        }
+        .sub-btn { 
+            font-size: 12px; color: var(--text-main); cursor: pointer; 
+            background: #fff; border: 1px solid var(--border); padding: 10px 16px; 
+            border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: 0.2s;
+        }
+        .sub-btn:active { transform: scale(0.95); background: #f0f0f0; }
+
+        .tos-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 16px 0; border-bottom: 1px solid #f5f5f5;
+        }
+        .tos-info { font-size: 14px; color: var(--text-main); line-height: 1.4; }
+        .tos-info span { font-size: 12px; color: var(--text-sub); display: block; margin-top: 3px; }
+
+        .switch { position: relative; width: 38px; height: 20px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e0e0e0; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        #custom-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #fff; width: 280px; padding: 30px; border-radius: 28px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;
+        }
+        .modal-text { font-size: 15px; color: var(--text-main); margin-bottom: 25px; line-height: 1.5; font-weight: 400; }
+        .modal-btn { 
+            width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none;
+            border-radius: 16px; font-weight: 600; cursor: pointer;
         }
 
-        .logo { 
-            font-size: 28px; 
-            font-weight: 800; 
-            margin-bottom: 5px; 
-            letter-spacing: -1px;
-            color: var(--primary-black);
-        }
-
-        .warning-box {
-            background: rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--primary-black);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            text-align: left;
-        }
-        .warning-title {
-            color: var(--primary-black);
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .warning-text {
-            color: var(--text-gray);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .input-field {
-            width: 100%; padding: 16px; font-size: 15px; border: 1px solid #ddd;
-            border-radius: 10px; margin-bottom: 12px; outline: none; transition: all 0.3s;
-            background: #fff; color: black;
-        }
-        .input-field:focus { 
-            border-color: var(--primary-black); 
-            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05); 
-        }
-
-        #login-error { color: #ff3b30; font-size: 13px; margin-bottom: 12px; display: none; font-weight: 600; }
-
-        .submit-btn {
-            width: 100%; padding: 16px; font-size: 16px; font-weight: 700;
-            background-color: var(--primary-black); color: white; border: none; border-radius: 10px;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .submit-btn:hover { background-color: var(--hover-black); }
-
-        #main-portal { display: none; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.8s ease; }
-        .portal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
-        .portal-card {
-            background: #fff; border-radius: 16px; padding: 25px 15px; border: 1px solid #eee;
-            cursor: pointer; transition: all 0.3s; color: var(--text-black); text-align: center;
-        }
-        .portal-card:hover { border-color: var(--primary-black); transform: translateY(-3px); }
-
-        #loading-overlay { display: none; margin-bottom: 20px; }
-        .progress-container { width: 100%; height: 8px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .progress-bar { width: 0%; height: 100%; background: var(--primary-black); }
-
-        #modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal { background: white; padding: 30px; border-radius: 20px; width: 320px; text-align: center; border-top: 6px solid var(--primary-black); }
-        .modal-btn { background: var(--primary-black); color: white; border: none; padding: 12px 24px; border-radius: 8px; margin-top: 20px; cursor: pointer; font-weight: 600; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="login-container">
-        <div class="logo">MinsuGPT 접속패널</div>
-        <p style="color:var(--text-gray); font-size: 14px; margin-bottom: 25px;">지정된 사용자만 접근할 수 있습니다.</p>
-        
-        <div class="warning-box">
-            <span class="warning-title">안내: 접속 권한이 필요합니다</span>
-            <span class="warning-text">
-                이 접속패널을 이용하시려면 관리자에게 직접 문의하여 권한을 부여받으십시오. 
-                비인가 접근 시도는 보안 정책에 따라 제한될 수 있습니다.
-            </span>
+    <div class="wrapper">
+        <div class="container" id="main-box">
+            <div id="login-section">
+                <div class="header">
+                    <img src="https://i.postimg.cc/kg01fcVG/logop.png" alt="logo">
+                    <span>MinsuGPT</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="uid" class="input-field" placeholder="ID">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="upw" class="input-field" placeholder="Password">
+                </div>
+                <div class="options">
+                    <div class="options-label">자동 로그인</div>
+                    <label class="switch">
+                        <input type="checkbox" id="auto-login">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn" id="login-btn" onclick="handleLogin()">
+                    <span id="btn-text">Connect</span>
+                    <div id="btn-loading" class="loading-wrap">
+                        <img src="https://i.postimg.cc/FHC2gcKw/supawork-e581c010c923449a8cbeab7a31029ed5.webp">
+                    </div>
+                </button>
+            </div>
+
+            <div id="tos-section">
+                <div class="header" style="margin-bottom: 10px;">
+                    <span style="font-size: 20px;">Welcome</span>
+                </div>
+                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 30px; text-align: center;">이용을 위해 약관에 동의해주세요.</p>
+
+                <div class="tos-item">
+                    <div class="tos-info">서비스 이용약관<span>기본 이용 규칙 동의</span></div>
+                    <label class="switch"><input type="checkbox" id="tos-service" onchange="syncTOS()"><span class="slider"></span></label>
+                </div>
+                <div class="tos-item">
+                    <div class="tos-info">개인정보 처리방침<span>데이터 보안 및 보호</span></div>
+                    <label class="switch"><input type="checkbox" id="tos-privacy" onchange="syncTOS()"><span class="slider"></span></label>
+                </div>
+                <div class="tos-item" style="border-bottom: none;">
+                    <div class="tos-info"><strong>쿠키 수집 동의 (필수)</strong><span>세션 유지를 위한 기술적 항목</span></div>
+                    <label class="switch"><input type="checkbox" id="required-check" onchange="syncTOS()"><span class="slider"></span></label>
+                </div>
+
+                <button class="btn" id="start-btn" style="margin-top: 30px;" disabled onclick="go()">
+                    Get Started
+                </button>
+                <button class="sub-btn" id="tos-logout" style="margin: 25px auto 0; display: none; width: fit-content;" onclick="logout()">로그아웃</button>
+            </div>
+
+            <div id="auto-loading-section">
+                <div class="loading-content">
+                    <div class="loading-header-inline">
+                        <img src="https://i.postimg.cc/kg01fcVG/logop.png" alt="logo">
+                        <span>MinsuGPT</span>
+                    </div>
+                    <img src="https://i.postimg.cc/FHC2gcKw/supawork-e581c010c923449a8cbeab7a31029ed5.webp" class="ani-gif" alt="loading">
+                </div>
+            </div>
         </div>
 
-        <input type="text" id="uid" class="input-field" placeholder="Admin ID" autocomplete="off">
-        <input type="password" id="upw" class="input-field" placeholder="Access Password" autocomplete="off">
-        <div id="login-error">잘못된 접근입니다. 보안 로그에 기록되었습니다.</div>
-        <button id="login-btn" class="submit-btn" onclick="attemptLogin()">시스템 접속</button>
-        
-        <p style="font-size: 11px; color: #bbb; margin-top: 20px;">IP Address Recorded: [PROTECTED]</p>
+        <div id="external-footer" class="external-footer" style="display: none;">
+            <button class="sub-btn" onclick="showTOS()">약관동의 변경</button>
+            <button class="sub-btn" onclick="logout()">로그아웃</button>
+        </div>
     </div>
 
-    <div id="main-portal">
-        <div style="text-align: left; margin-bottom: 20px;">
-            <div style="font-size: 14px; color: var(--primary-black); font-weight: 600;">Authorized Session</div>
-            <h1 style="font-size: 28px; margin: 5px 0 0 0; color: var(--text-black);">접속이 승인되었습니다</h1>
-        </div>
-
-        <div id="loading-overlay">
-            <span style="font-size: 13px; font-weight: 600;" id="loading-status">보안 터널 생성 중...</span>
-            <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
-        </div>
-
-        <div class="portal-grid">
-            <button class="portal-card" onclick="startRedirect('https://lite.minsugpt.kro.kr')">
-                <span style="font-size: 18px; font-weight: 700; display: block;">Lite Mode</span>
-                <span style="font-size: 12px; color: var(--text-gray);">Server Status: Normal</span>
-            </button>
-            <button class="portal-card" onclick="startRedirect('https://minsugpt.kro.kr')">
-                <span style="font-size: 18px; font-weight: 700; display: block;">Standard</span>
-                <span style="font-size: 12px; color: var(--text-gray);">All Systems Active</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="modal-overlay">
-        <div class="modal">
-            <h3 id="modal-title" style="margin-top:0; color:var(--primary-black);">Information</h3>
-            <p id="modal-msg" style="color:var(--text-gray); font-size: 14px;"></p>
+    <div id="custom-modal">
+        <div class="modal-box">
+            <div class="modal-text" id="modal-msg"></div>
             <button class="modal-btn" onclick="closeModal()">확인</button>
         </div>
     </div>
 
     <script>
-        const API = "https://jaewondev2.pythonanywhere.com/check-access";
+        const AUTH_API = "https://jaewondev2.pythonanywhere.com/check-access";
+        let redirectTimer;
 
-        async function attemptLogin() {
-            const id = document.getElementById("uid").value;
-            const password = document.getElementById("upw").value;
-            const errorMsg = document.getElementById("login-error");
-            const btn = document.getElementById("login-btn");
+        window.onload = function() {
+            loadTOSSettings();
+            
+            const sessionActive = localStorage.getItem('minsu_session') === 'active';
+            const essentialAgreed = localStorage.getItem('tos_essential') === 'true';
 
-            errorMsg.style.display = "none";
-
-            if (!id || !password) {
-                errorMsg.innerText = "인증 정보를 입력하십시오.";
-                errorMsg.style.display = "block";
-                return;
+            if(sessionActive) {
+                if(essentialAgreed) showAutoLoading();
+                else showTOS();
             }
+        };
+
+        function showModal(msg) {
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').style.display = 'none';
+        }
+
+        async function handleLogin() {
+            const id = document.getElementById('uid').value;
+            const password = document.getElementById('upw').value;
+            const btn = document.getElementById('login-btn');
+            const text = document.getElementById('btn-text');
+            const loading = document.getElementById('btn-loading');
+
+            if(!id || !password) return showModal("정보를 입력해주세요.");
 
             btn.disabled = true;
-            btn.innerText = "인증 중...";
+            text.style.display = 'none';
+            loading.style.display = 'flex';
 
             try {
-                const res = await fetch(API, {
+                const res = await fetch(AUTH_API, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ id, password })
@@ -190,44 +239,84 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    document.getElementById("login-container").remove();
-                    document.getElementById("main-portal").style.display = "block";
-                    document.body.style.backgroundColor = "#fff";
+                    if(document.getElementById('auto-login').checked) {
+                        localStorage.setItem('minsu_session', 'active');
+                    }
+                    if(localStorage.getItem('tos_essential') === 'true') showAutoLoading();
+                    else showTOS();
                 } else {
-                    errorMsg.innerText = "잘못된 접근입니다. 보안 로그에 기록되었습니다.";
-                    errorMsg.style.display = "block";
-                    btn.disabled = false;
-                    btn.innerText = "시스템 접속";
+                    showModal("잘못된 접근입니다. 보안 로그에 기록되었습니다.");
+                    resetLoginBtn();
                 }
             } catch (e) {
-                errorMsg.innerText = "서버 연결 오류: 네트워크를 확인하십시오.";
-                errorMsg.style.display = "block";
-                btn.disabled = false;
-                btn.innerText = "시스템 접속";
+                showModal("서버 연결 오류가 발생했습니다.");
+                resetLoginBtn();
             }
         }
 
-        function startRedirect(url) {
-            const overlay = document.getElementById("loading-overlay");
-            const bar = document.getElementById("progress-bar");
-            
-            // 상태 강제 초기화
-            bar.style.transition = "none";
-            bar.style.width = "0%";
-            overlay.style.display = "block";
-            
-            // 약간의 지연 후 애니메이션 재시작
-            setTimeout(() => { 
-                bar.style.transition = "width 1.5s cubic-bezier(0.4, 0, 0.2, 1)";
-                bar.style.width = "100%"; 
-            }, 50);
-
-            setTimeout(() => {
-                window.location.href = url;
-            }, 1600);
+        function resetLoginBtn() {
+            const btn = document.getElementById('login-btn');
+            const text = document.getElementById('btn-text');
+            const loading = document.getElementById('btn-loading');
+            btn.disabled = false;
+            text.style.display = 'block';
+            loading.style.display = 'none';
         }
 
-        function closeModal() { document.getElementById("modal-overlay").style.display = "none"; }
+        // 약관 개별 저장 로직
+        function syncTOS() {
+            const s = document.getElementById('tos-service').checked;
+            const p = document.getElementById('tos-privacy').checked;
+            const e = document.getElementById('required-check').checked;
+
+            localStorage.setItem('tos_service', s);
+            localStorage.setItem('tos_privacy', p);
+            localStorage.setItem('tos_essential', e);
+
+            document.getElementById('start-btn').disabled = !e;
+            document.getElementById('tos-logout').style.display = e ? 'none' : 'block';
+        }
+
+        function loadTOSSettings() {
+            const s = localStorage.getItem('tos_service') === 'true';
+            const p = localStorage.getItem('tos_privacy') === 'true';
+            const e = localStorage.getItem('tos_essential') === 'true';
+
+            document.getElementById('tos-service').checked = s;
+            document.getElementById('tos-privacy').checked = p;
+            document.getElementById('required-check').checked = e;
+            
+            document.getElementById('start-btn').disabled = !e;
+            if(!e && localStorage.getItem('minsu_session') === 'active') {
+                document.getElementById('tos-logout').style.display = 'block';
+            }
+        }
+
+        function showAutoLoading() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('tos-section').style.display = 'none';
+            document.getElementById('auto-loading-section').style.display = 'block';
+            document.getElementById('external-footer').style.display = 'flex';
+            redirectTimer = setTimeout(go, 2000);
+        }
+
+        function showTOS() {
+            if(redirectTimer) clearTimeout(redirectTimer);
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('auto-loading-section').style.display = 'none';
+            document.getElementById('external-footer').style.display = 'none';
+            document.getElementById('tos-section').style.display = 'block';
+        }
+
+        function logout() {
+            if(redirectTimer) clearTimeout(redirectTimer);
+            localStorage.clear(); // 모든 세션 및 약관 동의 초기화
+            location.reload();
+        }
+
+        function go() {
+            window.location.href = "https://minsugpt.kro.kr/";
+        }
     </script>
 </body>
 </html>
